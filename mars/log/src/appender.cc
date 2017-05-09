@@ -711,7 +711,7 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     tick.gettickcount();
 	__del_timeout_file(_dir);
 
-    tickcountdiff_t del_timeout_file_time = tickcount_t().gettickcount() - tick;
+    //tickcountdiff_t del_timeout_file_time = tickcount_t().gettickcount() - tick;
     
     tick.gettickcount();
 
@@ -753,28 +753,28 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
         __writetips2file("~~~~~ end of mmap ~~~~~%s\n", mark_info);
     }
 
-    tickcountdiff_t get_mmap_time = tickcount_t().gettickcount() - tick;
+    //tickcountdiff_t get_mmap_time = tickcount_t().gettickcount() - tick;
 
 
-    char appender_info[728] = {0};
-    snprintf(appender_info, sizeof(appender_info), "^^^^^^^^^^" __DATE__ "^^^" __TIME__ "^^^^^^^^^^%s", mark_info);
+    //char appender_info[728] = {0};
+    //snprintf(appender_info, sizeof(appender_info), "^^^^^^^^^^" __DATE__ "^^^" __TIME__ "^^^^^^^^^^%s", mark_info);
 
-    xlogger_appender(NULL, appender_info);
-    char logmsg[64] = {0};
-    snprintf(logmsg, sizeof(logmsg), "del time out files time: %" PRIu64, (int64_t)del_timeout_file_time);
-    xlogger_appender(NULL, logmsg);
+    //xlogger_appender(NULL, appender_info);
+    //char logmsg[64] = {0};
+    //snprintf(logmsg, sizeof(logmsg), "del time out files time: %" PRIu64, (int64_t)del_timeout_file_time);
+    //xlogger_appender(NULL, logmsg);
 
-    snprintf(logmsg, sizeof(logmsg), "get mmap time: %" PRIu64, (int64_t)get_mmap_time);
-    xlogger_appender(NULL, logmsg);
+    //snprintf(logmsg, sizeof(logmsg), "get mmap time: %" PRIu64, (int64_t)get_mmap_time);
+    //xlogger_appender(NULL, logmsg);
 
-    xlogger_appender(NULL, "MARS_URL: " MARS_URL);
-    xlogger_appender(NULL, "MARS_PATH: " MARS_PATH);
-    xlogger_appender(NULL, "MARS_REVISION: " MARS_REVISION);
-    xlogger_appender(NULL, "MARS_BUILD_TIME: " MARS_BUILD_TIME);
-    xlogger_appender(NULL, "MARS_BUILD_JOB: " MARS_TAG);
+    //xlogger_appender(NULL, "MARS_URL: " MARS_URL);
+    //xlogger_appender(NULL, "MARS_PATH: " MARS_PATH);
+    //xlogger_appender(NULL, "MARS_REVISION: " MARS_REVISION);
+    //xlogger_appender(NULL, "MARS_BUILD_TIME: " MARS_BUILD_TIME);
+    //xlogger_appender(NULL, "MARS_BUILD_JOB: " MARS_TAG);
 
-    snprintf(logmsg, sizeof(logmsg), "log appender mode:%d, use mmap:%d", (int)_mode, use_mmap);
-    xlogger_appender(NULL, logmsg);
+    //snprintf(logmsg, sizeof(logmsg), "log appender mode:%d, use mmap:%d", (int)_mode, use_mmap);
+    //xlogger_appender(NULL, logmsg);
 
 	BOOT_RUN_EXIT(appender_close);
 
@@ -824,11 +824,11 @@ void appender_flush_sync() {
 void appender_close() {
     if (sg_log_close) return;
 
-    char mark_info[512] = {0};
-    get_mark_info(mark_info, sizeof(mark_info));
-    char appender_info[728] = {0};
-    snprintf(appender_info, sizeof(appender_info), "$$$$$$$$$$" __DATE__ "$$$" __TIME__ "$$$$$$$$$$%s\n", mark_info);
-    xlogger_appender(NULL, appender_info);
+    //char mark_info[512] = {0};
+    //get_mark_info(mark_info, sizeof(mark_info));
+    //char appender_info[728] = {0};
+    //snprintf(appender_info, sizeof(appender_info), "$$$$$$$$$$" __DATE__ "$$$" __TIME__ "$$$$$$$$$$%s\n", mark_info);
+    //xlogger_appender(NULL, appender_info);
 
     sg_log_close = true;
 

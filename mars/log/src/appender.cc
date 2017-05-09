@@ -135,17 +135,17 @@ class ScopeErrno {
 }
 
 static void __make_logfilename(const timeval& _tv, const std::string& _logdir, const char* _prefix, const std::string& _fileext, char* _filepath, unsigned int _len) {
-    time_t sec = _tv.tv_sec;
-    tm tcur = *localtime((const time_t*)&sec);
+    //time_t sec = _tv.tv_sec;
+    //tm tcur = *localtime((const time_t*)&sec);
 
     std::string logfilepath = _logdir;
     logfilepath += "/";
     logfilepath += _prefix;
-    char temp [64] = {0};
-    snprintf(temp, 64, "_%d%02d%02d", 1900 + tcur.tm_year, 1 + tcur.tm_mon, tcur.tm_mday);
-    logfilepath += temp;
-    logfilepath += ".";
-    logfilepath += _fileext;
+    //char temp [64] = {0};
+    //snprintf(temp, 64, "_%d%02d%02d", 1900 + tcur.tm_year, 1 + tcur.tm_mon, tcur.tm_mday);
+    //logfilepath += temp;
+    //logfilepath += ".";
+    //logfilepath += _fileext;
     strncpy(_filepath, logfilepath.c_str(), _len - 1);
     _filepath[_len - 1] = '\0';
 }
@@ -716,7 +716,8 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     tick.gettickcount();
 
     char mmap_file_path[512] = {0};
-    snprintf(mmap_file_path, sizeof(mmap_file_path), "%s/%s.mmap2", sg_cache_logdir.empty()?_dir:sg_cache_logdir.c_str(), _nameprefix);
+	char mmap_file_prefix[] = "fs_normallog";
+    snprintf(mmap_file_path, sizeof(mmap_file_path), "%s/%s.mmap2", sg_cache_logdir.empty()?_dir:sg_cache_logdir.c_str(), mmap_file_prefix);
 
     bool use_mmap = false;
     if (OpenMmapFile(mmap_file_path, kBufferBlockLength, sg_mmmap_file))  {

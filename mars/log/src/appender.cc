@@ -69,7 +69,7 @@
 
 #include "log_buffer.h"
 
-#define LOG_EXT "dat"
+//#define LOG_EXT "dat"
 
 extern void log_formater(const XLoggerInfo* _info, const char* _logbody, PtrBuffer& _log);
 extern void ConsoleLog(const XLoggerInfo* _info, const char* _log);
@@ -79,6 +79,7 @@ static TAppenderMode sg_mode = kAppednerAsync;
 static std::string sg_logdir;
 static std::string sg_cache_logdir;
 static std::string sg_logfileprefix;
+static std::string LOG_EXT;
 
 static Mutex sg_mutex_log_file;
 static FILE* sg_logfile = NULL;
@@ -107,7 +108,7 @@ static bool sg_consolelog_open = false;
 static void __async_log_thread();
 static Thread sg_thread_async(&__async_log_thread);
 
-static const unsigned int kBufferBlockLength = 150 * 1024;
+static const unsigned int kBufferBlockLength = 1024 * 1024;
 static const long kMaxLogAliveTime = 10 * 24 * 60 * 60;	// 10 days in second
 
 static std::string sg_log_extra_msg;
@@ -135,17 +136,17 @@ class ScopeErrno {
 }
 
 static void __make_logfilename(const timeval& _tv, const std::string& _logdir, const char* _prefix, const std::string& _fileext, char* _filepath, unsigned int _len) {
-    //time_t sec = _tv.tv_sec;
-    //tm tcur = *localtime((const time_t*)&sec);
+    time_t sec = _tv.tv_sec;
+    tm tcur = *localtime((const time_t*)&sec);
 
     std::string logfilepath = _logdir;
     logfilepath += "/";
     logfilepath += _prefix;
-    //char temp [64] = {0};
-    //snprintf(temp, 64, "_%d%02d%02d", 1900 + tcur.tm_year, 1 + tcur.tm_mon, tcur.tm_mday);
-    //logfilepath += temp;
-    //logfilepath += ".";
-    //logfilepath += _fileext;
+    char temp [64] = {0};
+    snprintf(temp, 64, "_%d_%02d_%02d", 1900 + tcur.tm_year, 1 + tcur.tm_mon, tcur.tm_mday);
+    logfilepath += temp;
+    logfilepath += ".";
+    logfilepath += _fileext;
     strncpy(_filepath, logfilepath.c_str(), _len - 1);
     _filepath[_len - 1] = '\0';
 }
@@ -247,7 +248,7 @@ static bool __append_file(const std::string& _src_file, const std::string& _dst_
 
     return true;
 }
-
+//the function is usless now
 static void __move_old_files(const std::string& _src_path, const std::string& _dest_path, const std::string& _nameprefix) {
     if (_src_path == _dest_path) {
         return;
@@ -716,8 +717,7 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     tick.gettickcount();
 
     char mmap_file_path[512] = {0};
-	char mmap_file_prefix[] = "fs_normallog";
-    snprintf(mmap_file_path, sizeof(mmap_file_path), "%s/%s.mmap2", sg_cache_logdir.empty()?_dir:sg_cache_logdir.c_str(), mmap_file_prefix);
+    snprintf(mmap_file_path, sizeof(mmap_file_path), "%s/%s.mmap2", sg_cache_logdir.empty()?_dir:sg_cache_logdir.c_str(), _nameprefix);
 
     bool use_mmap = false;
     if (OpenMmapFile(mmap_file_path, kBufferBlockLength, sg_mmmap_file))  {
@@ -749,9 +749,9 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
     get_mark_info(mark_info, sizeof(mark_info));
 
     if (buffer.Ptr()) {
-        __writetips2file("~~~~~ begin of mmap ~~~~~\n");
+        //__writetips2file("~~~~~ begin of mmap ~~~~~\n");
         __log2file(buffer.Ptr(), buffer.Length());
-        __writetips2file("~~~~~ end of mmap ~~~~~%s\n", mark_info);
+        //__writetips2file("~~~~~ end of mmap ~~~~~%s\n", mark_info);
     }
 
     //tickcountdiff_t get_mmap_time = tickcount_t().gettickcount() - tick;
@@ -781,12 +781,13 @@ void appender_open(TAppenderMode _mode, const char* _dir, const char* _nameprefi
 
 }
 
-void appender_open_with_cache(TAppenderMode _mode, const std::string& _cachedir, const std::string& _logdir, const char* _nameprefix) {
+void appender_open_with_cache(TAppenderMode _mode, const std::string& _cachedir, const std::string& _logdir, const char* _nameprefix, const std::string& _log_ext) {
     assert(!_cachedir.empty());
     assert(!_logdir.empty());
     assert(_nameprefix);
 
     sg_logdir = _logdir;
+	LOG_EXT = _log_ext;
 
     if (!_cachedir.empty()) {
     	sg_cache_logdir = _cachedir;

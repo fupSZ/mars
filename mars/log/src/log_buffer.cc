@@ -186,7 +186,8 @@ void LogBuffer::__Fix() {
     //if (s_log_crypt->Fix((char*)buff_.Ptr(), buff_.Length(), is_compress_, raw_log_len)) {
     //    buff_.Length(raw_log_len + s_log_crypt->GetHeaderLen(), raw_log_len + s_log_crypt->GetHeaderLen());
     //} else {
-        buff_.Length(0, 0);
+    	uint32_t log_len = strlen((char*)buff_.Ptr());
+        buff_.Length(log_len, log_len);
     //}
 
 }

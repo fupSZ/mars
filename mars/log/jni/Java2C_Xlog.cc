@@ -28,9 +28,9 @@ DEFINE_FIND_CLASS(KXlog, "com/tencent/mars/xlog/Xlog")
 
 extern "C" {
 
-DEFINE_FIND_STATIC_METHOD(KXlog_appenderOpenWithMultipathWithLevel, KXlog, "appenderOpen", "(IILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V")
+DEFINE_FIND_STATIC_METHOD(KXlog_appenderOpenWithMultipathWithLevel, KXlog, "appenderOpen", "(IILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V")
 JNIEXPORT void JNICALL Java_com_tencent_mars_xlog_Xlog_appenderOpen
-	(JNIEnv *env, jclass, jint level, jint mode, jstring _cache_dir, jstring _log_dir, jstring _nameprefix) {
+	(JNIEnv *env, jclass, jint level, jint mode, jstring _cache_dir, jstring _log_dir, jstring _nameprefix, jstring _log_ext) {
 	if (NULL == _log_dir || NULL == _nameprefix) {
 		return;
 	}
@@ -40,10 +40,15 @@ JNIEXPORT void JNICALL Java_com_tencent_mars_xlog_Xlog_appenderOpen
 		ScopedJstring cache_dir_jstr(env, _cache_dir);
 		cache_dir = cache_dir_jstr.GetChar();
 	}
+	std::string log_ext;
+	if(NULL != _log_ext) {
+		ScopedJstring log_ext_jstr(env, _log_ext);
+		log_ext = log_ext_jstr.GetChar();
+	}
 
 	ScopedJstring log_dir_jstr(env, _log_dir);
 	ScopedJstring nameprefix_jstr(env, _nameprefix);
-	appender_open_with_cache((TAppenderMode)mode, cache_dir.c_str(), log_dir_jstr.GetChar(), nameprefix_jstr.GetChar());
+	appender_open_with_cache((TAppenderMode)mode, cache_dir.c_str(), log_dir_jstr.GetChar(), nameprefix_jstr.GetChar(), log_ext.c_str());
 	xlogger_SetLevel((TLogLevel)level);
 
 }
